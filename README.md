@@ -1,3 +1,6 @@
+# Warning
+**The use of sparse Linear layer does reduce the number of parameters, but it will occupy more memory to maintain sparse matrices unless there is a more efficient way to store sparse matrices.**
+
 # SparesModelForTorch
 SparseLinear and other purning method using torch_sparse
 
