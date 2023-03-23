@@ -29,14 +29,14 @@ class SparseLinearFunction(torch.autograd.Function):
 
 
 class SparseLinear(nn.Module):
-    def __init__(self, weight, bias, sparsity):
+    def __init__(self, weight, bias, device=None, dtype=None):
         super(SparseLinear, self).__init__()
-        self.sparsity = sparsity
-
         self.in_features = weight.size(1)
         self.out_features = weight.size(0)
 
-        self.sparse_weight_indices = weight.to_sparse().indices()
+        self.sparse_weight_indices = torch.nn.Parameter(weight.to_sparse().indices(), requires_grad=False)
+        self.register_parameter("sparse_weight_indices", self.sparse_weight_indices)
+
         self.sparse_weight_values = torch.nn.Parameter(weight.to_sparse().values())
         self.register_parameter("sparse_weight_values", self.sparse_weight_values)
 
@@ -66,4 +66,4 @@ class SparseLinear(nn.Module):
     def extra_repr(self):
         return 'input_features={}, output_features={}, bias={}, sparsity={}'.format(
             self.in_features, self.out_features,
-            len(self.bias) > 0, self.sparsity)
+            len(self.bias) > 0, round(len(self.sparse_weight_values)/(self.in_features * self.out_features), 2))
